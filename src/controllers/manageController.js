@@ -67,31 +67,85 @@ export const listImgSave = async (req, res) => {
   }
 };
 
-// xóa ảnh đã tạo
+// xóa hình
 export const deleteImg = async (req, res) => {
   try {
     let { hinh_id } = req.params;
-    // kiểm tra bình luận của ảnh
-    const commentHinh = await model.binh_luan.findAll({
+    let { token } = req.headers;
+    let dToken = decodeToken(token);
+    let { nguoi_dung_id } = dToken.data;
+
+    // kiểm tra ảnh có tồn tại không
+    const ImgDetail = await model.hinh_anh.findOne({
       where: {
         hinh_id,
+        nguoi_dung_id,
       },
     });
-    // nếu bình luận có thì xóa bình luận của hình ảnh
-    if (commentHinh) {
-      await model.binh_luan.destroy({
+
+    // nếu ảnh tồn tại thì set lại hien_thi
+    if (ImgDetail) {
+      await model.hinh_anh.update(
+        { hien_thi: false },
+        {
+          where: {
+            hinh_id,
+            nguoi_dung_id,
+          },
+        }
+      );
+      responseData(res, "xóa thành công", ImgDetail, 200);
+    } else {
+      responseData(res, "ảnh không tồn tại", nguoi_dung_id, 404);
+    }
+  } catch (exception) {
+    responseData(res, "lỗi ...", exception.message, 500);
+  }
+};
+
+// xóa ảnh đã tạo dành cho Admin
+export const deleteImgAdmin = async (req, res) => {
+  try {
+    let { hinh_id } = req.params;
+
+    let { token } = req.headers;
+    let dToken = decodeToken(token);
+    let { nguoi_dung_id } = dToken.data;
+
+    const checkImg = await model.hinh_anh.findOne({
+      where: {
+        hinh_id,
+        nguoi_dung_id,
+      },
+    });
+    if (checkImg) {
+      // kiểm tra bình luận của ảnh
+      const commentHinh = await model.binh_luan.findAll({
         where: {
           hinh_id,
+          nguoi_dung_id,
         },
       });
+      // nếu bình luận có thì xóa bình luận của hình ảnh
+      if (commentHinh) {
+        await model.binh_luan.destroy({
+          where: {
+            hinh_id,
+            nguoi_dung_id,
+          },
+        });
+      }
+      // nếu bình luận rỗng thì xóa hình ảnh
+      const deleteImg = await model.hinh_anh.destroy({
+        where: {
+          hinh_id,
+          nguoi_dung_id,
+        },
+      });
+      responseData(res, "xóa thành công", deleteImg, 200);
+    } else {
+      responseData(res, "ảnh không tồn tại", "", 404);
     }
-    // nếu bình luận rỗng thì xóa hình ảnh
-    const deleteImg = await model.hinh_anh.destroy({
-      where: {
-        hinh_id,
-      },
-    });
-    responseData(res, "xóa thành công", deleteImg, 200);
   } catch (exception) {
     responseData(res, "lỗi ...", exception.message, 500);
   }

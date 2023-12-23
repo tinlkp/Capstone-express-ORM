@@ -49,10 +49,22 @@ export const postImg = async (req, res) => {
       duong_dan: file.filename,
       mo_ta: mota,
       nguoi_dung_id,
+      hien_thi: true,
     };
     await model.hinh_anh.create(imgData);
 
     responseData(res, "Tải ảnh thành công", imgData, 200);
+  } catch (exception) {
+    responseData(res, "Lỗi ...", exception.message, 500);
+  }
+};
+
+// lấy danh sách hình
+export const imgList = async (req, res) => {
+  try {
+    let data = await model.hinh_anh.findAll();
+
+    responseData(res, "danh sách hình ảnh", data, 200);
   } catch (exception) {
     responseData(res, "Lỗi ...", exception.message, 500);
   }
