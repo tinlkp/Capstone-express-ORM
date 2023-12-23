@@ -120,8 +120,9 @@ export const tokenRefresh = async (req, res) => {
   }
 };
 
-// logout
 
+
+// logout
 export const logout = async (req, res) => {
   try {
     // lấy thông tin người dùng từ token

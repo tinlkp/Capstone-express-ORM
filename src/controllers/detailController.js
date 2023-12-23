@@ -13,7 +13,6 @@ export const imgDetail = async (req, res) => {
       where: {
         hinh_id,
       },
-      include: ["nguoi_dung"],
     });
     responseData(res, "lấy chi tiết ảnh thành công", data, 200);
   } catch (exception) {
@@ -42,6 +41,41 @@ export const checkImg = async (req, res) => {
   try {
     let { hinh_id } = req.params;
 
+    let check = await model.hinh_anh.findOne({
+      where: {
+        hinh_id,
+      },
+    });
+
+    if (!check) {
+      responseData(res, "hình ảnh không tồn tại", "", 404);
+      return;
+    }
+    // kiểm tra ảnh được lưu hay chưa
+    let checkImg = await model.luu_anh.findOne({
+      where: {
+        hinh_id,
+      },
+    });
+
+    if (checkImg) {
+      responseData(res, "ảnh đã được lưu !!!", checkImg, 200);
+    } else {
+      responseData(res, "ảnh chưa được lưu !!!", "", 200);
+    }
+  } catch (exception) {
+    responseData(res, "lỗi ...", exception.message, 500);
+  }
+};
+// lưu ảnh
+export const saveImg = async (req, res) => {
+  try {
+    let { hinh_id } = req.params;
+    let { token } = req.headers;
+    let dToken = decodeToken(token);
+    let { nguoi_dung_id } = dToken.data;
+
+    // kiểm tra ảnh được lưu hay chưa
     let check = await model.luu_anh.findOne({
       where: {
         hinh_id,
@@ -49,9 +83,17 @@ export const checkImg = async (req, res) => {
     });
     if (check) {
       responseData(res, "ảnh đã được lưu !!!", check, 200);
-    } else {
-      responseData(res, "ảnh chưa được lưu !!!", "", 200);
+      return;
     }
+    // nếu ảnh chưa được lưu thì lưu vào
+    let saveImgData = {
+      hinh_id,
+      nguoi_dung_id,
+      ngay_luu: Date.now(),
+    };
+
+    let data = await model.luu_anh.create(saveImgData);
+    responseData(res, "Lưu ảnh thành công", data, 200);
   } catch (exception) {
     responseData(res, "lỗi ...", exception.message, 500);
   }
@@ -66,7 +108,7 @@ export const postComment = async (req, res) => {
 
     let dToken = decodeToken(token);
     let { nguoi_dung_id } = dToken.data;
-
+    
     let newData = {
       nguoi_dung_id,
       hinh_id,

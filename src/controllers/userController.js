@@ -8,7 +8,7 @@ import fs from "fs";
 
 let model = initModels(sequelize);
 
-// thông tin người dùng
+// lấy thông tin chi tiết người dùng
 export const getUserDetail = async (req, res) => {
   try {
     // lấy nguoi_dung_id dựa trên token đã đăng nhập
@@ -33,7 +33,7 @@ export const getUserDetail = async (req, res) => {
   }
 };
 
-// chỉnh sửa thông tin người dùng
+// thay đổi thông tin người dùng
 export const UpdateInfoUser = async (req, res) => {
   try {
     let { token } = req.headers;
@@ -59,13 +59,13 @@ export const UpdateInfoUser = async (req, res) => {
       },
     });
 
-    responseData(res, "Cập nhật thông tin thành công", "", 200);
+    responseData(res, "Cập nhật thông tin thành công", getUser, 200);
   } catch (exception) {
     responseData(res, "lỗi ...", exception.message, 500);
   }
 };
 
-// up avatar cho user
+// up hình đại diện
 export const upAvatar = async (req, res) => {
   try {
     let { file } = req;
@@ -114,6 +114,16 @@ export const upAvatar = async (req, res) => {
     });
 
     responseData(res, "Upload ảnh đại diện thành công!!!", file.filename, 200);
+  } catch (exception) {
+    responseData(res, "Lỗi ...", exception.message, 500);
+  }
+};
+
+// lấy danh sách người dùng
+export const userList = async (req, res) => {
+  try {
+    let data = await model.nguoi_dung.findAll();
+    responseData(res, "Danh sách người dùng", data, 200);
   } catch (exception) {
     responseData(res, "Lỗi ...", exception.message, 500);
   }

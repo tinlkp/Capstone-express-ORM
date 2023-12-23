@@ -4,6 +4,7 @@ import {
   commentDetai,
   imgDetail,
   postComment,
+  saveImg,
 } from "../controllers/detailController.js";
 
 const detailRouter = express.Router();
@@ -16,6 +17,9 @@ detailRouter.get("/comment/:hinh_id", commentDetai);
 
 // kiểm tra ảnh lưu hay chưa
 detailRouter.get("/img-check/:hinh_id", checkImg);
+
+// lưu ảnh
+detailRouter.post("/save-img/:hinh_id", saveImg);
 
 // bình luận
 detailRouter.post("/post-comment/:hinh_id", postComment);
