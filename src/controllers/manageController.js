@@ -58,46 +58,12 @@ export const listImgSave = async (req, res) => {
     const imgList = await model.luu_anh.findAll({
       where: {
         nguoi_dung_id,
+        hien_thi: true,
       },
+      include: ["hinh"],
     });
 
     responseData(res, "lấy danh sách ảnh thành công", imgList, 200);
-  } catch (exception) {
-    responseData(res, "lỗi ...", exception.message, 500);
-  }
-};
-
-// xóa hình
-export const deleteImg = async (req, res) => {
-  try {
-    let { hinh_id } = req.params;
-    let { token } = req.headers;
-    let dToken = decodeToken(token);
-    let { nguoi_dung_id } = dToken.data;
-
-    // kiểm tra ảnh có tồn tại không
-    const ImgDetail = await model.hinh_anh.findOne({
-      where: {
-        hinh_id,
-        nguoi_dung_id,
-      },
-    });
-
-    // nếu ảnh tồn tại thì set lại hien_thi
-    if (ImgDetail) {
-      await model.hinh_anh.update(
-        { hien_thi: false },
-        {
-          where: {
-            hinh_id,
-            nguoi_dung_id,
-          },
-        }
-      );
-      responseData(res, "xóa thành công", ImgDetail, 200);
-    } else {
-      responseData(res, "ảnh không tồn tại", nguoi_dung_id, 404);
-    }
   } catch (exception) {
     responseData(res, "lỗi ...", exception.message, 500);
   }

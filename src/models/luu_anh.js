@@ -25,6 +25,10 @@ export default class luu_anh extends Model {
     ngay_luu: {
       type: DataTypes.DATE,
       allowNull: true
+    },
+    hien_thi: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true
     }
   }, {
     sequelize,
