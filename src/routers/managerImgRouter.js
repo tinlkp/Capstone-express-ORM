@@ -1,6 +1,5 @@
 import express from "express";
 import {
-  deleteImg,
   deleteImgAdmin,
   getUserDetail,
   listImg,
@@ -18,10 +17,7 @@ manageImgRouter.get("/list-img", listImg);
 // danh sách ảnh đã lưu theo user id
 manageImgRouter.get("/list-img-save", listImgSave);
 
-// xóa hình
-manageImgRouter.delete("/delete-img/:hinh_id", deleteImg);
-
-// xóa luôn hình theo hinh_id
+// xóa luôn hình
 manageImgRouter.delete("/delete-img-admin/:hinh_id", deleteImgAdmin);
 
 export default manageImgRouter;

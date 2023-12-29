@@ -2,24 +2,16 @@ import express from "express";
 import {
   checkImg,
   commentDetai,
-  imgDetail,
   postComment,
-  saveImg,
 } from "../controllers/detailController.js";
 
 const detailRouter = express.Router();
-
-// thông tin chi tiết ảnh và người dùng
-detailRouter.get("/img/:hinh_id", imgDetail);
 
 // thông tin bình luận
 detailRouter.get("/comment/:hinh_id", commentDetai);
 
 // kiểm tra ảnh lưu hay chưa
 detailRouter.get("/img-check/:hinh_id", checkImg);
-
-// lưu ảnh
-detailRouter.post("/save-img/:hinh_id", saveImg);
 
 // bình luận
 detailRouter.post("/post-comment/:hinh_id", postComment);

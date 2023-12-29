@@ -6,10 +6,13 @@ let model = initModels(sequelize);
 
 export const getImgList = async (req, res) => {
   try {
-    let imgList = await model.hinh_anh.findAll();
+    let imgList = await model.hinh_anh.findAll({
+      where: {
+        hien_thi: true,
+      },
+    });
     responseData(res, "Lấy danh sách ảnh thành công", imgList, 200);
   } catch (exception) {
     responseData(res, "Lỗi ...", exception.message, 500);
   }
 };
-
